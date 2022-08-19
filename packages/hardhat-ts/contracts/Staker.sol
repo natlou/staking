@@ -18,7 +18,10 @@ contract Staker {
 
   // MODIFIERS
   /// Modifier that checks whether the required deadline has passed
-
+  modifier deadlineExpired() {
+    require (block.timestamp > deadline);
+    _;
+  }
 
 
   constructor(address exampleExternalContractAddress) public {
@@ -37,7 +40,7 @@ contract Staker {
   // TODO: After some `deadline` allow anyone to call an `execute()` function
   //  It should call `exampleExternalContract.complete{value: address(this).balance}()` to send all the value
 
-  function execute() public {
+  function execute() public deadlineExpired {
     uint256 contractBalance = address(this).balance;
     if (contractBalance > threshold) {
       exampleExternalContract.complete{value: address(this).balance}();
