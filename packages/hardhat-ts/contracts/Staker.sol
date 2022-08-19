@@ -16,9 +16,12 @@ contract Staker {
 
   // TODO: Collect funds in a payable `stake()` function and track individual `balances` with a mapping:
   //  ( make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
-  
+  event Stake(address sender, uint256 value); 
+
   function stake() public payable {
     balances[msg.sender] += msg.value;
+    
+    emit Stake(msg.sender, msg.value);
   }
 
   // TODO: After some `deadline` allow anyone to call an `execute()` function
