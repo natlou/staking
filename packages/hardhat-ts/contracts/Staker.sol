@@ -7,10 +7,20 @@ import './ExampleExternalContract.sol';
 contract Staker {
   ExampleExternalContract public exampleExternalContract;
 
+  // maps address to balances 
   mapping ( address => uint256 ) public balances;
+  // staking threshhold
   uint256 public constant threshold = 1 ether;
+  // staking deadline
   uint256 public deadline = block.timestamp + 30 seconds;
-  
+  // staking failed 
+  bool public openForWithdrawal = false; 
+
+  // MODIFIERS
+  /// Modifier that checks whether the required deadline has passed
+
+
+
   constructor(address exampleExternalContractAddress) public {
     exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
   }
@@ -21,12 +31,20 @@ contract Staker {
 
   function stake() public payable {
     balances[msg.sender] += msg.value;
-    
     emit Stake(msg.sender, msg.value);
   }
 
   // TODO: After some `deadline` allow anyone to call an `execute()` function
   //  It should call `exampleExternalContract.complete{value: address(this).balance}()` to send all the value
+
+  function execute() public {
+    uint256 contractBalance = address(this).balance;
+    if (contractBalance > threshold) {
+      exampleExternalContract.complete{value: address(this).balance}();
+    } else {
+      openForWithdrawal = true; 
+    }
+  }
 
   // TODO: if the `threshold` was not met, allow everyone to call a `withdraw()` function
 
