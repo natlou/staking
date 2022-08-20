@@ -23,6 +23,12 @@ contract Staker {
     _;
   }
 
+  modifier stakingNotCompleted() {
+    if (exampleExternalContract.completed() == false) {
+      _;
+    }
+  }
+
 
   constructor(address exampleExternalContractAddress) public {
     exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
@@ -40,7 +46,7 @@ contract Staker {
   // TODO: After some `deadline` allow anyone to call an `execute()` function
   //  It should call `exampleExternalContract.complete{value: address(this).balance}()` to send all the value
 
-  function execute() public deadlineExpired {
+  function execute() public deadlineExpired stakingNotCompleted {
     uint256 contractBalance = address(this).balance;
     if (contractBalance > threshold) {
       exampleExternalContract.complete{value: address(this).balance}();
