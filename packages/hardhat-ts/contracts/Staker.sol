@@ -18,17 +18,22 @@ contract Staker {
 
   // MODIFIERS
   /// Modifier that checks whether the required deadline has passed
-  modifier deadlineExpired() {
-    require (block.timestamp > deadline);
+  modifier deadlinePassed(bool requireDeadlinePassed) {
+    uint256 timeRemaining = timeLeft();
+    if (requireDeadlinePassed) {
+      require(timeRemaining <= 0, "Deadline has not been passed yet");
+    } else {
+      require(timeRemaining > 0, "Deadline is already passed");
+    }
     _;
   }
 
+  /// Modifier that checks whether the external contract is completed
   modifier stakingNotCompleted() {
-    if (exampleExternalContract.completed() == false) {
-      _;
-    }
+    bool completed = exampleExternalContract.completed();
+    require(completed == false, "Staking period has completed");
+    _;
   }
-
 
   constructor(address exampleExternalContractAddress) public {
     exampleExternalContract = ExampleExternalContract(exampleExternalContractAddress);
