@@ -18,9 +18,9 @@ contract Staker {
 
   // MODIFIERS
   /// Modifier that checks whether the required deadline has passed
-  modifier deadlinePassed(bool requireDeadlinePassed) {
+  modifier deadlineExpired(bool requireDeadlineExpired) {
     uint256 timeRemaining = timeLeft();
-    if (requireDeadlinePassed) {
+    if (requireDeadlineExpired) {
       require(timeRemaining <= 0, "Deadline has not been passed yet");
     } else {
       require(timeRemaining > 0, "Deadline is already passed");
@@ -43,7 +43,7 @@ contract Staker {
   //  ( make sure to add a `Stake(address,uint256)` event and emit it for the frontend <List/> display )
   event Stake(address sender, uint256 value); 
 
-  function stake() public payable {
+  function stake() public payable deadlineExpired(false) stakingNotCompleted {
     balances[msg.sender] += msg.value;
     emit Stake(msg.sender, msg.value);
   }
@@ -51,7 +51,7 @@ contract Staker {
   // TODO: After some `deadline` allow anyone to call an `execute()` function
   //  It should call `exampleExternalContract.complete{value: address(this).balance}()` to send all the value
 
-  function execute() public deadlineExpired stakingNotCompleted {
+  function execute() public deadlineExpired(true) stakingNotCompleted {
     uint256 contractBalance = address(this).balance;
     if (contractBalance > threshold) {
       exampleExternalContract.complete{value: address(this).balance}();
