@@ -63,8 +63,18 @@ contract Staker {
   // TODO: if the `threshold` was not met, allow everyone to call a `withdraw()` function
 
   function withdraw() public deadlineExpired(true) stakingNotCompleted {
+
     require(openForWithdrawal, "Not open for withdrawal.");
+
+    uint256 userBalance = balances[msg.sender]; 
+
+    require(userBalance > 0, "User balance is 0"); 
+
+    balances[msg.sender] = 0; 
     
+    (bool sent, ) = (true, false);
+
+    require(sent, "Failed to send transaction"); 
   }
 
   // TODO: Add a `timeLeft()` view function that returns the time left before the deadline for the frontend
