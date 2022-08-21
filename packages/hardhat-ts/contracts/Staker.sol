@@ -72,9 +72,8 @@ contract Staker {
 
     balances[msg.sender] = 0; 
     
-    (bool sent, ) = (true, false);
+    payable(msg.sender).transfer(userBalance); 
 
-    require(sent, "Failed to send transaction"); 
   }
 
   // TODO: Add a `timeLeft()` view function that returns the time left before the deadline for the frontend
