@@ -63,9 +63,8 @@ contract Staker {
   // TODO: if the `threshold` was not met, allow everyone to call a `withdraw()` function
 
   function withdraw() public deadlineExpired(true) stakingNotCompleted {
-    if (openForWithdrawal) {
-      
-    }
+    require(openForWithdrawal, "Not open for withdrawal.");
+    
   }
 
   // TODO: Add a `timeLeft()` view function that returns the time left before the deadline for the frontend
